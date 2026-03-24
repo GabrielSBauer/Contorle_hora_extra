@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Controle de Horário - ADM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --cor-primaria: #a80a43;
+    --cor-secundaria: #f8bbd0;
+    --cor-caixa: #fdf1f5;
+    --cor-texto: #2d2d2d;
+    --cor-destaque: #a80a43;
+    --cor-positivo: #2e7d32;
+    --cor-negativo: #c62828;
+    --cor-fundo: linear-gradient(135deg, #fce4ec, #f8bbd0, #f48fb1);
+  }
+
+  body {
+    font-family: "Poppins", "Segoe UI", sans-serif;
+    background: var(--cor-fundo);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 40px 20px;
+    color: var(--cor-texto);
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 30px;
+    width: 100%;
+    justify-content: center;
+  }
+
+  header img {
+    width: 80px;
+    height: auto;
+    filter: hue-rotate(320deg) brightness(1.1);
+  }
+
+  header h1 {
+    font-size: 1.6rem;
+    color: var(--cor-primaria);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+
+  /* --- NOVO CONTAINER PARA O LAYOUT LADO A LADO --- */
+  .container-cards {
+    display: flex;           /* Ativa o modo flexível */
+    flex-wrap: wrap;         /* Permite quebrar linha se não couber (Responsivo) */
+    justify-content: center; /* Centraliza os blocos na tela */
+    gap: 30px;               /* Espaço entre os blocos */
+    width: 100%;
+    max-width: 1000px;       /* Largura máxima para não ficar muito espalhado em monitores gigantes */
+  }
+
+  /* Ajuste no card para funcionar dentro do flex */
+  .card {
+    background: #f8bbd0;
+    border-radius: 20px;
+    box-shadow: 0 8px 28px rgba(168, 10, 67, 0.4);
+    padding: 30px;
+    width: 100%;             
+    max-width: 400px;        /* Tamanho ideal de cada cartão */
+    text-align: center;
+    transition: 0.3s;
+    position: relative;
+    /* Removemos a margem inferior fixa, o GAP do container cuida disso agora */
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(168, 10, 67, 0.6);
+  }
+
+  .section-title {
+    background: rgba(255,255,255,0.4);
+    border-radius: 8px;
+    padding: 5px;
+    margin-bottom: 20px;
+    color: var(--cor-primaria);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+  }
+
+  h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--cor-texto);
+    margin-bottom: 8px;
+    margin-top: 0;
+  }
+
+  input[type="time"] {
+    font-size: 1.5rem;
+    padding: 10px 16px;
+    border: 2px solid #a80a43;
+    border-radius: 10px;
+    background-color: #fff;
+    text-align: center;
+    width: 150px;
+    transition: all 0.2s ease-in-out;
+    color: var(--cor-destaque);
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  input[type="time"]:focus {
+    outline: none;
+    border-color: var(--cor-primaria);
+    box-shadow: 0 0 0 4px rgba(168, 10, 67, 0.2);
+  }
+
+  .input-resultado {
+    background-color: var(--cor-caixa);
+    font-weight: 600;
+  }
+
+  .resultado {
+    background: var(--cor-caixa);
+    font-size: 2rem;
+    padding: 12px 20px;
+    border-radius: 14px;
+    margin-top: 6px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    color: var(--cor-primaria);
+    border: 1px solid #a80a43;
+    display: inline-block;
+    min-width: 150px;
+  }
+
+  .saldo-positivo {
+    color: var(--cor-positivo);
+    border-color: var(--cor-positivo);
+    background-color: #e8f5e9;
+  }
+
+  .saldo-negativo {
+    color: var(--cor-negativo);
+    border-color: var(--cor-negativo);
+    background-color: #ffebee;
+  }
+
+  .bloco {
+    margin-bottom: 15px;
+  }
+
+  .info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    font-size: 0.9rem;
+    color: #4a0033;
+    background: rgba(255,255,255,0.3);
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .info strong {
+    color: var(--cor-destaque);
+  }
+
+  footer {
+    margin-top: 40px;
+    font-size: 0.9rem;
+    color: #4b5563;
+    text-align: center;
+    padding-bottom: 20px;
+    width: 100%;
+  }
+
+  footer span {
+    color: var(--cor-primaria);
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+  <header>
+    <img src="\\c65saprofile\ctxprofile$\Redirection\i947593\Downloads\Gemini_Generated_Image_56rkua56rkua56rk.png" alt="Logo">
+    <h1>Controle de Horário ADM</h1>
+  </header>
+
+  <div class="container-cards">
+    
+    <div class="card">
+      <div class="section-title">📅 Planejamento do Dia</div>
+
+      <div class="bloco">
+        <h2>Hora de Entrada</h2>
+        <input type="time" id="entrada">
+      </div>
+
+      <div class="bloco">
+        <h2>Saída Normal (8h30 totais)</h2>
+        <input type="time" id="saidaNormal" class="input-resultado">
+      </div>
+
+      <div class="bloco">
+        <h2>Saída Máxima (+1h30)</h2>
+        <div id="saidaMaxima" class="resultado">--:--</div>
+      </div>
+	<div class="info">
+        <div>Base de Cálculo: <strong>8h30 + 1h Almoço</strong></div>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <div class="section-title">⏱ Calculadora de Hora Extra</div>
+      
+      <div class="bloco">
+        <h2>Entrada Realizada</h2>
+        <input type="time" id="entradaReal">
+      </div>
+
+      <div class="bloco">
+        <h2>Saída Realizada</h2>
+        <input type="time" id="saidaReal">
+      </div>
+
+      <div class="bloco">
+        <h2>Saldo do Dia</h2>
+        <div id="saldoHoraExtra" class="resultado">--:--</div>
+      </div>
+
+      <div class="info">
+        <div>Base de Cálculo: <strong>8h30 + 1h Almoço</strong></div>
+      </div>
+    </div>
+
+  </div> <footer>
+    © 2025 <span>ADM</span> • Ferramenta interna de apoio
+  </footer>
+
+<script>
+  // --- SCRIPTS DO CARTÃO 1 (PLANEJAMENTO) ---
+  const entradaInput = document.getElementById('entrada');
+  const saidaNormalInput = document.getElementById('saidaNormal');
+  const saidaMaximaDiv = document.getElementById('saidaMaxima');
+  
+  const MINUTOS_JORNADA = 570; // 9h30
+  const MINUTOS_EXTRA_MAX = 90; // 1h30
+
+  function calcularHorario(hora, minutosAdicionar) {
+    const [h, m] = hora.split(':').map(Number);
+    let total = h * 60 + m + minutosAdicionar;
+    const minutosNoDia = 24 * 60;
+    total = ((total % minutosNoDia) + minutosNoDia) % minutosNoDia;
+    const hFinal = Math.floor(total / 60);
+    const mFinal = total % 60;
+    return `${String(hFinal).padStart(2,'0')}:${String(mFinal).padStart(2,'0')}`;
+  }
+
+  entradaInput.addEventListener('input', () => {
+    if (entradaInput.value) {
+      const saidaCalculada = calcularHorario(entradaInput.value, MINUTOS_JORNADA);
+      saidaNormalInput.value = saidaCalculada;
+      saidaMaximaDiv.textContent = calcularHorario(saidaCalculada, MINUTOS_EXTRA_MAX);
+    } else {
+      limparCamposPlanejamento('entrada');
+    }
+  });
+
+  saidaNormalInput.addEventListener('input', () => {
+    if (saidaNormalInput.value) {
+      const entradaCalculada = calcularHorario(saidaNormalInput.value, -MINUTOS_JORNADA);
+      entradaInput.value = entradaCalculada;
+      saidaMaximaDiv.textContent = calcularHorario(saidaNormalInput.value, MINUTOS_EXTRA_MAX);
+    } else {
+      limparCamposPlanejamento('saida');
+    }
+  });
+
+  function limparCamposPlanejamento(origem) {
+    if(origem === 'entrada') {
+        saidaNormalInput.value = '';
+        saidaMaximaDiv.textContent = '--:--';
+    } else if (origem === 'saida') {
+        entradaInput.value = '';
+        saidaMaximaDiv.textContent = '--:--';
+    }
+  }
+
+  // --- SCRIPTS DO CARTÃO 2 (CALCULADORA DE EXTRA) ---
+  const entradaRealInput = document.getElementById('entradaReal');
+  const saidaRealInput = document.getElementById('saidaReal');
+  const saldoDiv = document.getElementById('saldoHoraExtra');
+
+  function atualizarSaldo() {
+    const horaEntrada = entradaRealInput.value;
+    const horaSaida = saidaRealInput.value;
+
+    if (horaEntrada && horaSaida) {
+      const [h1, m1] = horaEntrada.split(':').map(Number);
+      const [h2, m2] = horaSaida.split(':').map(Number);
+
+      const minutosEntrada = h1 * 60 + m1;
+      let minutosSaida = h2 * 60 + m2;
+
+      if (minutosSaida < minutosEntrada) {
+        minutosSaida += 24 * 60; 
+      }
+
+      const tempoTotalTrabalhado = minutosSaida - minutosEntrada;
+      const saldoMinutos = tempoTotalTrabalhado - MINUTOS_JORNADA;
+
+      const sinal = saldoMinutos >= 0 ? "+" : "-";
+      const minutosAbs = Math.abs(saldoMinutos);
+      const hSaldo = Math.floor(minutosAbs / 60);
+      const mSaldo = minutosAbs % 60;
+      
+      const textoSaldo = `${sinal} ${String(hSaldo).padStart(2,'0')}:${String(mSaldo).padStart(2,'0')}`;
+      
+      saldoDiv.textContent = textoSaldo;
+      saldoDiv.className = 'resultado ' + (saldoMinutos >= 0 ? 'saldo-positivo' : 'saldo-negativo');
+
+    } else {
+      saldoDiv.textContent = '--:--';
+      saldoDiv.className = 'resultado';
+    }
+  }
+
+  entradaRealInput.addEventListener('input', atualizarSaldo);
+  saidaRealInput.addEventListener('input', atualizarSaldo);
+</script>
+
+</body>
+</html>
