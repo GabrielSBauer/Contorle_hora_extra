@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Controle de Horário - ADM</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/png" href="./Gemini_Generated_Image_56rkua56rkua56rk.png">
 <style>
   :root {
     --cor-primaria: #a80a43;
@@ -56,12 +57,18 @@
   .abas {
     display: flex;
     gap: 8px;
-    background: rgba(255,255,255,0.45);
+    background: rgba(255,255,255,0.65);
     padding: 6px;
     border-radius: 14px;
     margin-bottom: 28px;
     flex-wrap: wrap;
     justify-content: center;
+    position: sticky;
+    top: 10px;
+    z-index: 50;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 16px rgba(168, 10, 67, 0.18);
   }
 
   .aba {
@@ -552,7 +559,7 @@
 
         <div class="bloco">
           <h2>Saldo do Dia</h2>
-          <div id="saldoHoraExtra" class="resultado">--:--</div>
+          <div id="saldoHoraExtra" aria-live="polite" class="resultado">--:--</div>
         </div>
 
         <div class="info">
@@ -600,7 +607,7 @@
 
         <div class="bloco">
           <h2>Líquido, se for o único adicional do mês</h2>
-          <div id="liquidoExtra" class="resultado resultado-dinheiro">R$ 0,00</div>
+          <div id="liquidoExtra" aria-live="polite" class="resultado resultado-dinheiro">R$ 0,00</div>
         </div>
 
         <div class="detalhe" id="detalhe">
@@ -670,7 +677,7 @@
 
         <div class="bloco">
           <h2>Líquido, se for o único adicional do mês</h2>
-          <div id="saLiquido" class="resultado resultado-dinheiro">R$ 0,00</div>
+          <div id="saLiquido" aria-live="polite" class="resultado resultado-dinheiro">R$ 0,00</div>
         </div>
 
         <div class="detalhe">
@@ -778,7 +785,7 @@
 
         <div class="bloco">
           <h2>Total líquido dos adicionais</h2>
-          <div id="fcDestaque" class="resultado resultado-dinheiro">R$ 0,00</div>
+          <div id="fcDestaque" aria-live="polite" class="resultado resultado-dinheiro">R$ 0,00</div>
         </div>
 
         <div class="subtitulo">O que entrou</div>
@@ -829,6 +836,8 @@
       a.setAttribute('aria-selected', ativa);
       document.getElementById(a.getAttribute('aria-controls')).hidden = !ativa;
     });
+    const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: suave ? 'smooth' : 'auto' });
   }
 
   abas.forEach((a, i) => {
@@ -1005,7 +1014,11 @@
     return new Date(ano, mes - 1, dia);
   }
 
+  const cacheFeriados = {};
+
   function feriadosDoAno(ano, incluirFacultativos) {
+    const memo = ano + (incluirFacultativos ? '+f' : '');
+    if (cacheFeriados[memo]) return cacheFeriados[memo];
     const p = pascoa(ano);
     const chave = dt => `${dt.getMonth() + 1}-${dt.getDate()}`;
     const desloca = dias => new Date(p.getFullYear(), p.getMonth(), p.getDate() + dias);
@@ -1029,6 +1042,7 @@
       feriados.add(chave(desloca(60)));  // Corpus Christi
     }
 
+    cacheFeriados[memo] = feriados;
     return feriados;
   }
 
@@ -1049,9 +1063,14 @@
 
   function parseMoeda(str) {
     if (!str) return 0;
-    let s = String(str).replace(/[^\d.,-]/g, '');
-    if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
-    return parseFloat(s) || 0;
+    let s = String(str).replace(/[^\d.,]/g, '');
+    if (s.includes(',')) {
+      s = s.replace(/\./g, '').replace(',', '.');
+    } else if (/^\d{1,3}(\.\d{3})+$/.test(s)) {
+      // "4.140" ou "1.234.567" sem vírgula: pontos são separadores de milhar
+      s = s.replace(/\./g, '');
+    }
+    return Math.max(0, parseFloat(s) || 0);
   }
 
   function parseHoras(str) {
@@ -1059,9 +1078,10 @@
     const s = String(str).trim();
     if (s.includes(':')) {
       const [h, m] = s.split(':');
-      return (parseInt(h, 10) || 0) + (parseInt(m, 10) || 0) / 60;
+      const minutos = Math.min(Math.max(parseInt(m, 10) || 0, 0), 59);
+      return Math.max(0, (parseInt(h, 10) || 0)) + minutos / 60;
     }
-    return parseFloat(s.replace(',', '.')) || 0;
+    return Math.max(0, parseFloat(s.replace(',', '.')) || 0);
   }
 
   function fmtHoras(dec) {
@@ -1075,8 +1095,17 @@
 
   const DIVISOR = 220;                        // jornada mensal padrão da unidade
   const FRACAO_SOBREAVISO = 1 / 3;            // art. 244 §2 da CLT
-  const ANO = new Date().getFullYear();
   const MES_ATUAL = new Date().getMonth() + 1;
+
+  //  O seletor de mês não tem ano, então adotamos a ocorrência mais próxima:
+  //  um mês até 6 à frente é planejamento (ano corrente); mais que isso só faz
+  //  sentido olhando para trás (ano anterior). Em janeiro, "Dezembro" é o mês
+  //  que acabou de fechar, não o do fim do ano seguinte. Calculado na hora,
+  //  para uma aba aberta na virada do ano não ficar presa ao ano velho.
+  function anoDoMes(mes) {
+    const agora = new Date();
+    return (mes - (agora.getMonth() + 1) > 6) ? agora.getFullYear() - 1 : agora.getFullYear();
+  }
 
   const NOMES_MES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
                      'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
@@ -1097,12 +1126,12 @@
 
   // Proporção do DSR: domingos e feriados sobre dias úteis do mês
   function proporcaoDSR(mes) {
-    const { descanso, uteis } = calendarioDoMes(ANO, mes, false);
+    const { descanso, uteis } = calendarioDoMes(anoDoMes(mes), mes, false);
     return { descanso, uteis, fator: uteis > 0 ? descanso / uteis : 0 };
   }
 
   function rotuloDSR({ descanso, uteis, fator }) {
-    return `(${descanso}/${uteis} = ${(fator * 100).toFixed(2)}%)`;
+    return `(${descanso}/${uteis} = ${(fator * 100).toFixed(2).replace('.', ',')}%)`;
   }
 
   // ---- Cálculo unificado das três abas ----
@@ -1226,7 +1255,7 @@
     el('fcINSS').textContent = '\u2212 ' + fmt(rTudo.inss);
     el('fcIRRF').textContent = '\u2212 ' + fmt(rTudo.irrf);
     el('fcAliqINSS').textContent = rTudo.total > 0
-      ? `(${(rTudo.inss / rTudo.total * 100).toFixed(2)}% efetivo)` : '';
+      ? `(${(rTudo.inss / rTudo.total * 100).toFixed(2).replace('.', ',')}% efetivo)` : '';
     el('fcLiquidoMes').textContent = fmt(r2(rTudo.total - rTudo.inss - rTudo.irrf));
 
     const destaqueFc = el('fcDestaque');
@@ -1378,7 +1407,8 @@
     const mesSel = parseInt(mesRef.value, 10);
     const fechamento = parseInt(lcCiclo.value, 10);
     const prop = proporcaoDSR(mesSel);
-    const triAtual = trimestreDe(ANO, mesSel, fechamento);
+    const anoSel = anoDoMes(mesSel);
+    const triAtual = trimestreDe(anoSel, mesSel, fechamento);
 
     //  O limite de 2h do banco é diário, não por lançamento: duas anotações
     //  no mesmo dia somam antes de o corte ser aplicado.
@@ -1391,7 +1421,7 @@
       const total = totalPorData[data];
       const [y, m] = data.split('-').map(Number);
       const c = classificar(data);
-      const noMesSelecionado = (y === ANO && m === mesSel);
+      const noMesSelecionado = (y === anoSel && m === mesSel);
 
       if (c.grupo === 'sab') { if (noMesSelecionado) hSab += total; return; }
       if (c.grupo === 'dom') { if (noMesSelecionado) hDom += total; return; }
@@ -1492,7 +1522,8 @@
 
     // ---- Resumo do trimestre ----
     const pgto = triAtual.ultimo;
-    const anoNoRotulo = a => a !== ANO ? ` de ${a}` : '';
+    const anoCorrente = new Date().getFullYear();
+    const anoNoRotulo = a => a !== anoCorrente ? ` de ${a}` : '';
     el('lcTriPeriodo').textContent =
       `${NOMES_MES[triAtual.primeiro.mes - 1]}${anoNoRotulo(triAtual.primeiro.ano)} a ${NOMES_MES[triAtual.ultimo.mes - 1]}${anoNoRotulo(triAtual.ultimo.ano)}`;
     el('lcQtdSem').textContent = fmtHoras(hBanco);
@@ -1508,6 +1539,9 @@
   // ---- Eventos dos lançamentos ----
   lcData.addEventListener('change', renderizarPreview);
   lcData.addEventListener('input', renderizarPreview);
+  lcHoras.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); el('btnAddLanc').click(); }
+  });
   lcCiclo.addEventListener('change', () => { salvar(); renderizarLancamentos(); });
 
   el('btnAddLanc').addEventListener('click', () => {
@@ -1589,8 +1623,15 @@
   });
 
   // ---- Partida ----
+  //  Data local, nunca toISOString: em UTC-3, depois das 21h o ISO já é
+  //  o dia seguinte — e trocaria a classificação do lançamento.
+  function hojeLocal() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
   carregar();
-  lcData.value = new Date().toISOString().slice(0, 10);
+  lcData.value = hojeLocal();
   renderizarPreview();
   recalcular();
 </script>
