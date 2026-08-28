@@ -52,34 +52,75 @@
     text-align: center;
   }
 
-  /* --- NOVO CONTAINER PARA O LAYOUT LADO A LADO --- */
-  .container-cards {
-    display: flex;           /* Ativa o modo flexível */
-    flex-wrap: wrap;         /* Permite quebrar linha se não couber (Responsivo) */
-    justify-content: center; /* Centraliza os blocos na tela */
-    gap: 30px;               /* Espaço entre os blocos */
-    width: 100%;
-    max-width: 1000px;       /* Largura máxima para não ficar muito espalhado em monitores gigantes */
+  /* --- ABAS --- */
+  .abas {
+    display: flex;
+    gap: 8px;
+    background: rgba(255,255,255,0.45);
+    padding: 6px;
+    border-radius: 14px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
-  /* Ajuste no card para funcionar dentro do flex */
+  .aba {
+    border: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--cor-primaria);
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    letter-spacing: 0.3px;
+  }
+
+  .aba:hover { background: rgba(255,255,255,0.6); }
+
+  .aba[aria-selected="true"] {
+    background: var(--cor-primaria);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(168, 10, 67, 0.35);
+  }
+
+  .aba:focus-visible {
+    outline: 3px solid rgba(168, 10, 67, 0.35);
+    outline-offset: 2px;
+  }
+
+  .painel[hidden] { display: none; }
+
+  /* --- CONTAINER PARA O LAYOUT LADO A LADO --- */
+  .container-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 1000px;
+  }
+
   .card {
     background: #f8bbd0;
     border-radius: 20px;
     box-shadow: 0 8px 28px rgba(168, 10, 67, 0.4);
     padding: 30px;
-    width: 100%;             
-    max-width: 400px;        /* Tamanho ideal de cada cartão */
+    width: 100%;
+    max-width: 400px;
     text-align: center;
     transition: 0.3s;
     position: relative;
-    /* Removemos a margem inferior fixa, o GAP do container cuida disso agora */
   }
 
   .card:hover {
     transform: translateY(-3px);
     box-shadow: 0 12px 32px rgba(168, 10, 67, 0.6);
   }
+
+  .card-largo { max-width: 460px; }
 
   .section-title {
     background: rgba(255,255,255,0.4);
@@ -101,6 +142,15 @@
     margin-top: 0;
   }
 
+  .rotulo {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #4a0033;
+    display: block;
+    margin-bottom: 6px;
+    text-align: left;
+  }
+
   input[type="time"] {
     font-size: 1.5rem;
     padding: 10px 16px;
@@ -115,7 +165,25 @@
     cursor: pointer;
   }
 
-  input[type="time"]:focus {
+  .campo {
+    font-size: 1.05rem;
+    padding: 9px 12px;
+    border: 2px solid #a80a43;
+    border-radius: 10px;
+    background-color: #fff;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
+    color: var(--cor-destaque);
+    font-family: inherit;
+    font-weight: 600;
+  }
+
+  select.campo { cursor: pointer; }
+
+  input[type="time"]:focus,
+  .campo:focus {
     outline: none;
     border-color: var(--cor-primaria);
     box-shadow: 0 0 0 4px rgba(168, 10, 67, 0.2);
@@ -140,6 +208,12 @@
     min-width: 150px;
   }
 
+  .resultado-dinheiro {
+    display: block;
+    font-size: 2.1rem;
+    letter-spacing: -0.5px;
+  }
+
   .saldo-positivo {
     color: var(--cor-positivo);
     border-color: var(--cor-positivo);
@@ -154,6 +228,31 @@
 
   .bloco {
     margin-bottom: 15px;
+  }
+
+  .linha {
+    display: flex;
+    gap: 12px;
+  }
+
+  .linha .bloco { flex: 1; }
+  .linha .bloco.estreito { flex: 0 0 118px; }
+
+  .mes-inline {
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--cor-primaria);
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(168, 10, 67, 0.35);
+    border-radius: 6px;
+    padding: 1px 3px;
+    cursor: pointer;
+  }
+
+  .mes-inline:focus-visible {
+    outline: 2px solid rgba(168, 10, 67, 0.45);
+    outline-offset: 1px;
   }
 
   .info {
@@ -171,6 +270,89 @@
     color: var(--cor-destaque);
   }
 
+  /* --- DETALHAMENTO DA CALCULADORA --- */
+  .detalhe {
+    background: rgba(255,255,255,0.45);
+    border-radius: 12px;
+    padding: 6px 14px;
+    margin-top: 4px;
+    text-align: left;
+  }
+
+  .detalhe-linha {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.88rem;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(168, 10, 67, 0.15);
+    color: #4a0033;
+  }
+
+  .detalhe-linha:last-child { border-bottom: none; }
+
+  .detalhe-linha span:last-child {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .detalhe-linha.desconto span:last-child { color: var(--cor-negativo); }
+  .detalhe-linha.total {
+    border-top: 2px solid var(--cor-primaria);
+    font-weight: 700;
+    color: var(--cor-primaria);
+    padding-top: 10px;
+    margin-top: 3px;
+  }
+  .detalhe-linha.total span:last-child { color: var(--cor-primaria); }
+
+  .subtitulo {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--cor-primaria);
+    text-align: left;
+    margin: 18px 0 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(168, 10, 67, 0.25);
+  }
+
+  .dica {
+    font-size: 0.75rem;
+    color: #6b2545;
+    text-align: left;
+    margin-top: 5px;
+    line-height: 1.4;
+  }
+
+  .link-acao {
+    background: none;
+    border: none;
+    color: var(--cor-primaria);
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 4px 0;
+  }
+
+  .link-acao:hover { color: #6b2545; }
+
+  .caixa-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: #4a0033;
+    text-align: left;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  .caixa-check input { accent-color: var(--cor-primaria); width: 16px; height: 16px; cursor: pointer; }
+
   footer {
     margin-top: 40px;
     font-size: 0.9rem;
@@ -184,6 +366,11 @@
     color: var(--cor-primaria);
     font-weight: 500;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+    .card:hover { transform: none; }
+  }
 </style>
 </head>
 <body>
@@ -193,64 +380,296 @@
     <h1>Controle de Horário ADM</h1>
   </header>
 
-  <div class="container-cards">
-    
-    <div class="card">
-      <div class="section-title">📅 Planejamento do Dia</div>
+  <div class="abas" role="tablist" aria-label="Seções da ferramenta">
+    <button class="aba" role="tab" id="aba-horarios" aria-controls="painel-horarios" aria-selected="true">⏰ Horários</button>
+    <button class="aba" role="tab" id="aba-valores" aria-controls="painel-valores" aria-selected="false">💰 Quanto vou receber</button>
+    <button class="aba" role="tab" id="aba-sobreaviso" aria-controls="painel-sobreaviso" aria-selected="false">📟 Sobreaviso</button>
+    <button class="aba" role="tab" id="aba-fechamento" aria-controls="painel-fechamento" aria-selected="false">🧾 Fechamento do mês</button>
+  </div>
 
-      <div class="bloco">
-        <h2>Hora de Entrada</h2>
-        <input type="time" id="entrada">
+  <!-- ============ PAINEL 1: HORÁRIOS ============ -->
+  <div class="painel" id="painel-horarios" role="tabpanel" aria-labelledby="aba-horarios">
+    <div class="container-cards">
+
+      <div class="card">
+        <div class="section-title">📅 Planejamento do Dia</div>
+
+        <div class="bloco">
+          <h2>Hora de Entrada</h2>
+          <input type="time" id="entrada">
+        </div>
+
+        <div class="bloco">
+          <h2>Saída Normal (8h30 totais)</h2>
+          <input type="time" id="saidaNormal" class="input-resultado">
+        </div>
+
+        <div class="bloco">
+          <h2>Saída Máxima (+1h30)</h2>
+          <div id="saidaMaxima" class="resultado">--:--</div>
+        </div>
+
+        <div class="info">
+          <div>Base de Cálculo: <strong>8h30 + 1h Almoço</strong></div>
+        </div>
       </div>
 
-      <div class="bloco">
-        <h2>Saída Normal (8h30 totais)</h2>
-        <input type="time" id="saidaNormal" class="input-resultado">
-      </div>
+      <div class="card">
+        <div class="section-title">⏱ Calculadora de Hora Extra</div>
 
-      <div class="bloco">
-        <h2>Saída Máxima (+1h30)</h2>
-        <div id="saidaMaxima" class="resultado">--:--</div>
-      </div>
-	<div class="info">
-        <div>Base de Cálculo: <strong>8h30 + 1h Almoço</strong></div>
+        <div class="bloco">
+          <h2>Entrada Realizada</h2>
+          <input type="time" id="entradaReal">
+        </div>
+
+        <div class="bloco">
+          <h2>Saída Realizada</h2>
+          <input type="time" id="saidaReal">
+        </div>
+
+        <div class="bloco">
+          <h2>Saldo do Dia</h2>
+          <div id="saldoHoraExtra" class="resultado">--:--</div>
+        </div>
+
+        <div class="info">
+          <div>Base de Cálculo: <strong>8h30 + 1h Almoço</strong></div>
+        </div>
       </div>
 
     </div>
+  </div>
 
-    <div class="card">
-      <div class="section-title">⏱ Calculadora de Hora Extra</div>
-      
-      <div class="bloco">
-        <h2>Entrada Realizada</h2>
-        <input type="time" id="entradaReal">
+  <!-- ============ PAINEL 2: VALORES ============ -->
+  <div class="painel" id="painel-valores" role="tabpanel" aria-labelledby="aba-valores" hidden>
+    <div class="container-cards">
+
+      <div class="card card-largo">
+        <div class="section-title">💰 Quanto vou receber</div>
+
+        <div class="linha">
+          <div class="bloco">
+            <label class="rotulo" for="salarioBase">Seu salário base (R$)</label>
+            <input type="text" id="salarioBase" class="campo" inputmode="decimal" placeholder="0,00" autocomplete="off">
+          </div>
+          <div class="bloco estreito">
+            <label class="rotulo" for="dependentes">Dependentes IR</label>
+            <input type="number" id="dependentes" class="campo" min="0" max="20" step="1" value="0">
+          </div>
+        </div>
+        <div class="dica">É o "Salário Base" do topo do holerite. A jornada considerada é de 220h por mês.</div>
+
+        <div class="subtitulo">Horas extras do mês</div>
+
+        <div class="linha">
+          <div class="bloco">
+            <label class="rotulo" for="horas60">Sábado — 60%</label>
+            <input type="text" id="horas60" class="campo" inputmode="decimal" placeholder="0:00" autocomplete="off">
+          </div>
+          <div class="bloco">
+            <label class="rotulo" for="horas100">Domingo/feriado — 100%</label>
+            <input type="text" id="horas100" class="campo" inputmode="decimal" placeholder="0:00" autocomplete="off">
+          </div>
+        </div>
+        <div class="dica">Aceita <strong>8:30</strong> ou <strong>8,5</strong>. <button type="button" class="link-acao" id="btnUsarSaldo">Usar o saldo do dia como 60%</button></div>
+
+        <div class="subtitulo">Resultado</div>
+
+        <div class="bloco">
+          <h2>Líquido, se for o único adicional do mês</h2>
+          <div id="liquidoExtra" class="resultado resultado-dinheiro">R$ 0,00</div>
+        </div>
+
+        <div class="detalhe" id="detalhe">
+          <div class="detalhe-linha"><span>Valor da sua hora normal</span><span id="dValorHora">—</span></div>
+          <div class="detalhe-linha"><span>Hora extra 60% <small id="dQtd60"></small></span><span id="dHE60">—</span></div>
+          <div class="detalhe-linha"><span>Hora extra 100% <small id="dQtd100"></small></span><span id="dHE100">—</span></div>
+          <div class="detalhe-linha"><span>DSR de <select id="mesRef" class="mes-inline" aria-label="Mês de referência do DSR"></select> <small id="dPercDSR"></small></span><span id="dDSR">—</span></div>
+          <div class="detalhe-linha"><span>Total bruto das extras</span><span id="dBruto">—</span></div>
+          <div class="detalhe-linha desconto"><span>INSS a mais</span><span id="dINSS">—</span></div>
+          <div class="detalhe-linha desconto"><span>IRRF a mais</span><span id="dIRRF">—</span></div>
+          <div class="detalhe-linha total"><span>Líquido das extras</span><span id="dLiquido">—</span></div>
+        </div>
+
+        <div class="dica" id="avisoCombinado"></div>
+
+        <div class="dica" style="margin-top:14px">
+          Estimativa com as tabelas de INSS e IRRF de 2026. Não entram aqui os descontos fixos do seu holerite (vale-refeição, plano, adiantamento quinzenal), porque eles não mudam quando você faz hora extra. O FGTS de 8% o banco recebe por fora e não é descontado de você.
+        </div>
+
       </div>
 
-      <div class="bloco">
-        <h2>Saída Realizada</h2>
-        <input type="time" id="saidaReal">
-      </div>
-
-      <div class="bloco">
-        <h2>Saldo do Dia</h2>
-        <div id="saldoHoraExtra" class="resultado">--:--</div>
-      </div>
-
-      <div class="info">
-        <div>Base de Cálculo: <strong>8h30 + 1h Almoço</strong></div>
-      </div>
     </div>
+  </div>
 
-  </div> <footer>
+  <!-- ============ PAINEL 3: SOBREAVISO ============ -->
+  <div class="painel" id="painel-sobreaviso" role="tabpanel" aria-labelledby="aba-sobreaviso" hidden>
+    <div class="container-cards">
+
+      <div class="card card-largo">
+        <div class="section-title">📟 Sobreaviso</div>
+
+        <div class="linha">
+          <div class="bloco">
+            <label class="rotulo" for="saSalario">Seu salário base (R$)</label>
+            <input type="text" id="saSalario" class="campo" inputmode="decimal" placeholder="0,00" autocomplete="off">
+          </div>
+          <div class="bloco estreito">
+            <label class="rotulo" for="saDependentes">Dependentes IR</label>
+            <input type="number" id="saDependentes" class="campo" min="0" max="20" step="1" value="0">
+          </div>
+        </div>
+        <div class="dica">Jornada considerada: 220h por mês.</div>
+
+        <div class="subtitulo">Horas de escala</div>
+
+        <div class="bloco">
+          <label class="rotulo" for="saHoras">Tempo à disposição (pago a 1/3)</label>
+          <input type="text" id="saHoras" class="campo" inputmode="decimal" placeholder="0:00" autocomplete="off">
+          <div class="dica">Total de horas em que você ficou de prontidão no mês. Um fim de semana inteiro é <strong>48:00</strong>.</div>
+        </div>
+
+        <div class="subtitulo">Horas em que você foi acionado</div>
+
+        <div class="linha">
+          <div class="bloco">
+            <label class="rotulo" for="saAtuado60">Dia normal — 60%</label>
+            <input type="text" id="saAtuado60" class="campo" inputmode="decimal" placeholder="0:00" autocomplete="off">
+          </div>
+          <div class="bloco">
+            <label class="rotulo" for="saAtuado100">Domingo/feriado — 100%</label>
+            <input type="text" id="saAtuado100" class="campo" inputmode="decimal" placeholder="0:00" autocomplete="off">
+          </div>
+        </div>
+
+        <label class="caixa-check">
+          <input type="checkbox" id="saDescontar" checked>
+          <span>Descontar as horas acionadas do tempo à disposição</span>
+        </label>
+        <label class="caixa-check">
+          <input type="checkbox" id="saDsrSobreaviso" checked>
+          <span>Gerar DSR também sobre o sobreaviso</span>
+        </label>
+        <div class="dica" id="saAviso"></div>
+
+        <div class="subtitulo">Resultado</div>
+
+        <div class="bloco">
+          <h2>Líquido, se for o único adicional do mês</h2>
+          <div id="saLiquido" class="resultado resultado-dinheiro">R$ 0,00</div>
+        </div>
+
+        <div class="detalhe">
+          <div class="detalhe-linha"><span>Valor da sua hora normal</span><span id="sdValorHora">—</span></div>
+          <div class="detalhe-linha"><span>Hora de sobreaviso (1/3)</span><span id="sdValorSobreaviso">—</span></div>
+          <div class="detalhe-linha"><span>Sobreaviso <small id="sdQtdSA"></small></span><span id="sdSobreaviso">—</span></div>
+          <div class="detalhe-linha"><span>Acionamento 60% <small id="sdQtd60"></small></span><span id="sdAtuado60">—</span></div>
+          <div class="detalhe-linha"><span>Acionamento 100% <small id="sdQtd100"></small></span><span id="sdAtuado100">—</span></div>
+          <div class="detalhe-linha"><span>DSR de <select id="saMes" class="mes-inline" aria-label="Mês de referência do DSR"></select> <small id="sdPercDSR"></small></span><span id="sdDSR">—</span></div>
+          <div class="detalhe-linha"><span>Total bruto</span><span id="sdBruto">—</span></div>
+          <div class="detalhe-linha desconto"><span>INSS a mais</span><span id="sdINSS">—</span></div>
+          <div class="detalhe-linha desconto"><span>IRRF a mais</span><span id="sdIRRF">—</span></div>
+          <div class="detalhe-linha total"><span>Líquido do sobreaviso</span><span id="sdLiquido">—</span></div>
+        </div>
+
+        <div class="dica" id="saAvisoCombinado"></div>
+
+        <div class="dica" style="margin-top:14px">
+          O tempo de prontidão é pago a 1/3 da hora normal (art. 244 §2 da CLT). Quando você é acionado, aquelas horas viram hora extra do dia — 60% em dia comum, 100% em domingo ou feriado — e por isso saem da contagem do 1/3, já que você estava trabalhando e não apenas à disposição. Se a sua escala pagar as duas coisas por cima, desmarque a opção de descontar.
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ PAINEL 4: FECHAMENTO ============ -->
+  <div class="painel" id="painel-fechamento" role="tabpanel" aria-labelledby="aba-fechamento" hidden>
+    <div class="container-cards">
+
+      <div class="card card-largo">
+        <div class="section-title">🧾 Fechamento do mês</div>
+
+        <div class="dica" style="margin-bottom:6px">
+          Soma tudo o que você lançou nas abas <strong>Quanto vou receber</strong> e <strong>Sobreaviso</strong>, com o imposto calculado uma vez só sobre o total. É este o número que deve bater com o holerite.
+        </div>
+
+        <div class="bloco">
+          <h2>Total líquido dos adicionais</h2>
+          <div id="fcDestaque" class="resultado resultado-dinheiro">R$ 0,00</div>
+        </div>
+
+        <div class="subtitulo">O que entrou</div>
+
+        <div class="detalhe">
+          <div class="detalhe-linha"><span>Hora extra 60% <small id="fcQtdHE60"></small></span><span id="fcHE60">—</span></div>
+          <div class="detalhe-linha"><span>Hora extra 100% <small id="fcQtdHE100"></small></span><span id="fcHE100">—</span></div>
+          <div class="detalhe-linha"><span>Sobreaviso <small id="fcQtdSA"></small></span><span id="fcSA">—</span></div>
+          <div class="detalhe-linha"><span>Acionamento 60% <small id="fcQtdAt60"></small></span><span id="fcAt60">—</span></div>
+          <div class="detalhe-linha"><span>Acionamento 100% <small id="fcQtdAt100"></small></span><span id="fcAt100">—</span></div>
+          <div class="detalhe-linha"><span>DSR <small id="fcPercDSR"></small></span><span id="fcDSR">—</span></div>
+          <div class="detalhe-linha total"><span>Total bruto dos adicionais</span><span id="fcBrutoAdd">—</span></div>
+        </div>
+
+        <div class="subtitulo">Como fica o mês</div>
+
+        <div class="detalhe">
+          <div class="detalhe-linha"><span>Salário base</span><span id="fcSalario">—</span></div>
+          <div class="detalhe-linha"><span>Adicionais</span><span id="fcAdicionais">—</span></div>
+          <div class="detalhe-linha"><span>Bruto do mês</span><span id="fcBrutoTotal">—</span></div>
+          <div class="detalhe-linha desconto"><span>INSS <small id="fcAliqINSS"></small></span><span id="fcINSS">—</span></div>
+          <div class="detalhe-linha desconto"><span>IRRF</span><span id="fcIRRF">—</span></div>
+          <div class="detalhe-linha total"><span>Líquido antes dos benefícios</span><span id="fcLiquidoMes">—</span></div>
+        </div>
+
+        <div class="dica" id="fcNota" style="margin-top:14px"></div>
+
+        <div class="dica" style="margin-top:10px">
+          Ainda faltam descontar aqui os valores fixos do seu holerite (vale-refeição, vale-alimentação, seguro de vida, academia e o adiantamento quinzenal), porque eles não mudam com hora extra.
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
     © 2025 <span>ADM</span> • Ferramenta interna de apoio
   </footer>
 
 <script>
-  // --- SCRIPTS DO CARTÃO 1 (PLANEJAMENTO) ---
+  // ============================================================
+  //  ABAS
+  // ============================================================
+  const abas = Array.from(document.querySelectorAll('.aba'));
+
+  function trocarAba(alvo) {
+    abas.forEach(a => {
+      const ativa = a === alvo;
+      a.setAttribute('aria-selected', ativa);
+      document.getElementById(a.getAttribute('aria-controls')).hidden = !ativa;
+    });
+  }
+
+  abas.forEach((a, i) => {
+    a.addEventListener('click', () => trocarAba(a));
+    a.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      const passo = e.key === 'ArrowRight' ? 1 : -1;
+      const prox = abas[(i + passo + abas.length) % abas.length];
+      prox.focus();
+      trocarAba(prox);
+    });
+  });
+
+  // ============================================================
+  //  CARTÃO 1 — PLANEJAMENTO
+  // ============================================================
   const entradaInput = document.getElementById('entrada');
   const saidaNormalInput = document.getElementById('saidaNormal');
   const saidaMaximaDiv = document.getElementById('saidaMaxima');
-  
+
   const MINUTOS_JORNADA = 570; // 9h30
   const MINUTOS_EXTRA_MAX = 90; // 1h30
 
@@ -285,19 +704,22 @@
   });
 
   function limparCamposPlanejamento(origem) {
-    if(origem === 'entrada') {
-        saidaNormalInput.value = '';
-        saidaMaximaDiv.textContent = '--:--';
+    if (origem === 'entrada') {
+      saidaNormalInput.value = '';
+      saidaMaximaDiv.textContent = '--:--';
     } else if (origem === 'saida') {
-        entradaInput.value = '';
-        saidaMaximaDiv.textContent = '--:--';
+      entradaInput.value = '';
+      saidaMaximaDiv.textContent = '--:--';
     }
   }
 
-  // --- SCRIPTS DO CARTÃO 2 (CALCULADORA DE EXTRA) ---
+  // ============================================================
+  //  CARTÃO 2 — SALDO DO DIA
+  // ============================================================
   const entradaRealInput = document.getElementById('entradaReal');
   const saidaRealInput = document.getElementById('saidaReal');
   const saldoDiv = document.getElementById('saldoHoraExtra');
+  let saldoMinutosAtual = null;
 
   function atualizarSaldo() {
     const horaEntrada = entradaRealInput.value;
@@ -311,23 +733,23 @@
       let minutosSaida = h2 * 60 + m2;
 
       if (minutosSaida < minutosEntrada) {
-        minutosSaida += 24 * 60; 
+        minutosSaida += 24 * 60;
       }
 
       const tempoTotalTrabalhado = minutosSaida - minutosEntrada;
       const saldoMinutos = tempoTotalTrabalhado - MINUTOS_JORNADA;
+      saldoMinutosAtual = saldoMinutos;
 
       const sinal = saldoMinutos >= 0 ? "+" : "-";
       const minutosAbs = Math.abs(saldoMinutos);
       const hSaldo = Math.floor(minutosAbs / 60);
       const mSaldo = minutosAbs % 60;
-      
-      const textoSaldo = `${sinal} ${String(hSaldo).padStart(2,'0')}:${String(mSaldo).padStart(2,'0')}`;
-      
-      saldoDiv.textContent = textoSaldo;
+
+      saldoDiv.textContent = `${sinal} ${String(hSaldo).padStart(2,'0')}:${String(mSaldo).padStart(2,'0')}`;
       saldoDiv.className = 'resultado ' + (saldoMinutos >= 0 ? 'saldo-positivo' : 'saldo-negativo');
 
     } else {
+      saldoMinutosAtual = null;
       saldoDiv.textContent = '--:--';
       saldoDiv.className = 'resultado';
     }
@@ -335,6 +757,361 @@
 
   entradaRealInput.addEventListener('input', atualizarSaldo);
   saidaRealInput.addEventListener('input', atualizarSaldo);
+
+  // ============================================================
+  //  CARTÃO 3 — CALCULADORA DE VALOR
+  // ============================================================
+
+  // ---- Tabelas oficiais 2026 ----
+  const FAIXAS_INSS = [
+    [1621.00, 0.075],
+    [2902.84, 0.09],
+    [4354.27, 0.12],
+    [8475.55, 0.14]
+  ];
+
+  const FAIXAS_IRRF = [
+    [2428.80, 0,     0     ],
+    [2826.65, 0.075, 182.16],
+    [3751.05, 0.15,  394.16],
+    [4664.68, 0.225, 675.49],
+    [Infinity, 0.275, 908.73]
+  ];
+
+  const DESCONTO_SIMPLIFICADO = 607.20;
+  const DEDUCAO_DEPENDENTE = 189.59;
+
+  // Arredondamento meio-para-cima, imune ao erro de ponto flutuante
+  const r2 = v => Math.round(Number((v * 100).toFixed(4))) / 100;
+
+  function calcINSS(base) {
+    let inss = 0, anterior = 0;
+    for (const [teto, aliq] of FAIXAS_INSS) {
+      if (base > anterior) inss += r2((Math.min(base, teto) - anterior) * aliq);
+      anterior = teto;
+    }
+    return r2(inss);
+  }
+
+  function calcIRRF(bruto, inss, dependentes) {
+    const deducoesLegais = inss + dependentes * DEDUCAO_DEPENDENTE;
+    const base = bruto - Math.max(DESCONTO_SIMPLIFICADO, deducoesLegais);
+    if (base <= 0) return 0;
+
+    let imposto = 0;
+    for (const [teto, aliq, pd] of FAIXAS_IRRF) {
+      if (base <= teto) { imposto = base * aliq - pd; break; }
+    }
+    imposto = Math.max(0, imposto);
+
+    // Redução do IR (Lei 15.270/2025)
+    let reducao = 0;
+    if (bruto <= 5000) reducao = 312.89;
+    else if (bruto <= 7350) reducao = 978.62 - 0.133145 * bruto;
+
+    return r2(Math.max(0, imposto - reducao));
+  }
+
+  // ---- Calendário / feriados ----
+  function pascoa(ano) {
+    const a = ano % 19, b = Math.floor(ano / 100), c = ano % 100;
+    const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+    const g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4), k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7;
+    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const mes = Math.floor((h + l - 7 * m + 114) / 31);
+    const dia = ((h + l - 7 * m + 114) % 31) + 1;
+    return new Date(ano, mes - 1, dia);
+  }
+
+  function calendarioDoMes(ano, mes, incluirFacultativos) {
+    const p = pascoa(ano);
+    const chave = dt => `${dt.getMonth() + 1}-${dt.getDate()}`;
+    const desloca = dias => new Date(p.getFullYear(), p.getMonth(), p.getDate() + dias);
+
+    const feriados = new Set([
+      '1-1',    // Confraternização Universal
+      '4-21',   // Tiradentes
+      '5-1',    // Dia do Trabalho
+      '7-9',    // Revolução Constitucionalista (SP)
+      '9-7',    // Independência
+      '10-12',  // Nossa Senhora Aparecida
+      '11-2',   // Finados
+      '11-15',  // Proclamação da República
+      '11-20',  // Consciência Negra
+      '12-25'   // Natal
+    ]);
+    feriados.add(chave(desloca(-2))); // Sexta-feira Santa
+
+    if (incluirFacultativos) {
+      feriados.add(chave(desloca(-47))); // Carnaval (terça)
+      feriados.add(chave(desloca(60)));  // Corpus Christi
+    }
+
+    const diasNoMes = new Date(ano, mes, 0).getDate();
+    let descanso = 0;
+    for (let d = 1; d <= diasNoMes; d++) {
+      const dt = new Date(ano, mes - 1, d);
+      if (dt.getDay() === 0 || feriados.has(`${mes}-${d}`)) descanso++;
+    }
+    return { descanso, uteis: diasNoMes - descanso };
+  }
+
+  // ---- Parsers e formatadores ----
+  const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+  const fmt = v => brl.format(v || 0);
+
+  function parseMoeda(str) {
+    if (!str) return 0;
+    let s = String(str).replace(/[^\d.,-]/g, '');
+    if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+    return parseFloat(s) || 0;
+  }
+
+  function parseHoras(str) {
+    if (!str) return 0;
+    const s = String(str).trim();
+    if (s.includes(':')) {
+      const [h, m] = s.split(':');
+      return (parseInt(h, 10) || 0) + (parseInt(m, 10) || 0) / 60;
+    }
+    return parseFloat(s.replace(',', '.')) || 0;
+  }
+
+  function fmtHoras(dec) {
+    if (!dec) return '';
+    const total = Math.round(dec * 60);
+    return `(${Math.floor(total / 60)}h${String(total % 60).padStart(2, '0')})`;
+  }
+
+  // ---- Elementos ----
+  const el = id => document.getElementById(id);
+
+  const DIVISOR = 220;                        // jornada mensal padrão da unidade
+  const FRACAO_SOBREAVISO = 1 / 3;            // art. 244 §2 da CLT
+  const ANO = new Date().getFullYear();
+  const MES_ATUAL = new Date().getMonth() + 1;
+
+  const NOMES_MES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                     'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  // Aba "Quanto vou receber"
+  const salarioBase = el('salarioBase'), dependentes = el('dependentes');
+  const horas60 = el('horas60'), horas100 = el('horas100'), mesRef = el('mesRef');
+
+  // Aba "Sobreaviso"
+  const saSalario = el('saSalario'), saDependentes = el('saDependentes');
+  const saHoras = el('saHoras'), saAtuado60 = el('saAtuado60'), saAtuado100 = el('saAtuado100');
+  const saDescontar = el('saDescontar'), saDsrSobreaviso = el('saDsrSobreaviso'), saMes = el('saMes');
+
+  [mesRef, saMes].forEach(sel => {
+    NOMES_MES.forEach((nome, i) => sel.add(new Option(nome, i + 1)));
+    sel.value = MES_ATUAL;
+  });
+
+  // Proporção do DSR: domingos e feriados sobre dias úteis do mês
+  function proporcaoDSR(mes) {
+    const { descanso, uteis } = calendarioDoMes(ANO, mes, false);
+    return { descanso, uteis, fator: uteis > 0 ? descanso / uteis : 0 };
+  }
+
+  function rotuloDSR({ descanso, uteis, fator }) {
+    return `(${descanso}/${uteis} = ${(fator * 100).toFixed(2)}%)`;
+  }
+
+  // ---- Cálculo unificado das três abas ----
+  //  As abas isoladas mostram o valor daquele item sozinho em cima do salário.
+  //  O fechamento apura INSS e IRRF uma única vez sobre o bruto somado, que é
+  //  o número correto: somar os dois líquidos na mão subestima o imposto,
+  //  porque parte do valor combinado sobe de faixa.
+  function calcularTudo() {
+    const salario = parseMoeda(salarioBase.value);
+    const deps = parseInt(dependentes.value, 10) || 0;
+    const prop = proporcaoDSR(parseInt(mesRef.value, 10));
+    const valorHora = salario / DIVISOR;
+    const valorHoraSA = valorHora * FRACAO_SOBREAVISO;
+
+    // --- Hora extra avulsa ---
+    const h60 = parseHoras(horas60.value);
+    const h100 = parseHoras(horas100.value);
+    const he60 = r2(valorHora * 1.6 * h60);
+    const he100 = r2(valorHora * 2 * h100);
+
+    // --- Sobreaviso ---
+    const hEscala = parseHoras(saHoras.value);
+    const a60 = parseHoras(saAtuado60.value);
+    const a100 = parseHoras(saAtuado100.value);
+    const acionadas = a60 + a100;
+    const excedeu = saDescontar.checked && acionadas > hEscala && hEscala > 0;
+    const horasProntidao = saDescontar.checked ? Math.max(0, hEscala - acionadas) : hEscala;
+    const sobreaviso = r2(valorHoraSA * horasProntidao);
+    const at60 = r2(valorHora * 1.6 * a60);
+    const at100 = r2(valorHora * 2 * a100);
+    const baseDsrSA = at60 + at100 + (saDsrSobreaviso.checked ? sobreaviso : 0);
+
+    // --- DSR: por bloco e no total ---
+    const dsrExtras = r2((he60 + he100) * prop.fator);
+    const dsrSA = r2(baseDsrSA * prop.fator);
+    const dsrTotal = r2((he60 + he100 + baseDsrSA) * prop.fator);
+
+    const brutoExtras = r2(he60 + he100 + dsrExtras);
+    const brutoSA = r2(sobreaviso + at60 + at100 + dsrSA);
+    const brutoAdicionais = r2(he60 + he100 + sobreaviso + at60 + at100 + dsrTotal);
+
+    // --- Impostos: sempre marginais sobre o salário base ---
+    const inssSem = calcINSS(salario);
+    const irrfSem = calcIRRF(salario, inssSem, deps);
+
+    function liquidoDe(bruto) {
+      const total = r2(salario + bruto);
+      const inss = calcINSS(total);
+      const irrf = calcIRRF(total, inss, deps);
+      return {
+        total, inss, irrf,
+        inssExtra: r2(inss - inssSem),
+        irrfExtra: r2(irrf - irrfSem),
+        liquido: r2(bruto - r2(inss - inssSem) - r2(irrf - irrfSem))
+      };
+    }
+
+    const rExtras = liquidoDe(brutoExtras);
+    const rSA = liquidoDe(brutoSA);
+    const rTudo = liquidoDe(brutoAdicionais);
+
+    // ================= ABA "QUANTO VOU RECEBER" =================
+    el('dValorHora').textContent = salario ? fmt(valorHora) : '\u2014';
+    el('dQtd60').textContent = fmtHoras(h60);
+    el('dQtd100').textContent = fmtHoras(h100);
+    el('dPercDSR').textContent = rotuloDSR(prop);
+    el('dHE60').textContent = fmt(he60);
+    el('dHE100').textContent = fmt(he100);
+    el('dDSR').textContent = fmt(dsrExtras);
+    el('dBruto').textContent = fmt(brutoExtras);
+    el('dINSS').textContent = '\u2212 ' + fmt(rExtras.inssExtra);
+    el('dIRRF').textContent = '\u2212 ' + fmt(rExtras.irrfExtra);
+    el('dLiquido').textContent = fmt(rExtras.liquido);
+
+    const destaqueExtras = el('liquidoExtra');
+    destaqueExtras.textContent = fmt(rExtras.liquido);
+    destaqueExtras.className = 'resultado resultado-dinheiro' + (rExtras.liquido > 0 ? ' saldo-positivo' : '');
+
+    // ================= ABA "SOBREAVISO" =================
+    el('saAviso').textContent = excedeu
+      ? 'As horas acionadas passaram do tempo à disposição, então o sobreaviso zerou. Confira os números ou desmarque a opção de descontar.'
+      : '';
+
+    el('sdValorHora').textContent = salario ? fmt(valorHora) : '\u2014';
+    el('sdValorSobreaviso').textContent = salario ? fmt(valorHoraSA) : '\u2014';
+    el('sdQtdSA').textContent = fmtHoras(horasProntidao);
+    el('sdQtd60').textContent = fmtHoras(a60);
+    el('sdQtd100').textContent = fmtHoras(a100);
+    el('sdPercDSR').textContent = rotuloDSR(prop);
+    el('sdSobreaviso').textContent = fmt(sobreaviso);
+    el('sdAtuado60').textContent = fmt(at60);
+    el('sdAtuado100').textContent = fmt(at100);
+    el('sdDSR').textContent = fmt(dsrSA);
+    el('sdBruto').textContent = fmt(brutoSA);
+    el('sdINSS').textContent = '\u2212 ' + fmt(rSA.inssExtra);
+    el('sdIRRF').textContent = '\u2212 ' + fmt(rSA.irrfExtra);
+    el('sdLiquido').textContent = fmt(rSA.liquido);
+
+    const destaqueSA = el('saLiquido');
+    destaqueSA.textContent = fmt(rSA.liquido);
+    destaqueSA.className = 'resultado resultado-dinheiro' + (rSA.liquido > 0 ? ' saldo-positivo' : '');
+
+    // Se as duas abas têm lançamento, o número isolado não é o do mês
+    const temExtras = brutoExtras > 0;
+    const temSA = brutoSA > 0;
+    const recado = (temExtras && temSA)
+      ? 'Você também lançou na outra aba. O total real do mês, com o imposto certo, está na aba Fechamento do mês.'
+      : '';
+    el('avisoCombinado').textContent = recado;
+    el('saAvisoCombinado').textContent = recado;
+
+    // ================= ABA "FECHAMENTO" =================
+    el('fcQtdHE60').textContent = fmtHoras(h60);
+    el('fcQtdHE100').textContent = fmtHoras(h100);
+    el('fcQtdSA').textContent = fmtHoras(horasProntidao);
+    el('fcQtdAt60').textContent = fmtHoras(a60);
+    el('fcQtdAt100').textContent = fmtHoras(a100);
+    el('fcPercDSR').textContent = rotuloDSR(prop);
+    el('fcHE60').textContent = fmt(he60);
+    el('fcHE100').textContent = fmt(he100);
+    el('fcSA').textContent = fmt(sobreaviso);
+    el('fcAt60').textContent = fmt(at60);
+    el('fcAt100').textContent = fmt(at100);
+    el('fcDSR').textContent = fmt(dsrTotal);
+    el('fcBrutoAdd').textContent = fmt(brutoAdicionais);
+
+    el('fcSalario').textContent = fmt(salario);
+    el('fcAdicionais').textContent = fmt(brutoAdicionais);
+    el('fcBrutoTotal').textContent = fmt(rTudo.total);
+    el('fcINSS').textContent = '\u2212 ' + fmt(rTudo.inss);
+    el('fcIRRF').textContent = '\u2212 ' + fmt(rTudo.irrf);
+    el('fcAliqINSS').textContent = rTudo.total > 0
+      ? `(${(rTudo.inss / rTudo.total * 100).toFixed(2)}% efetivo)` : '';
+    el('fcLiquidoMes').textContent = fmt(r2(rTudo.total - rTudo.inss - rTudo.irrf));
+
+    const destaqueFc = el('fcDestaque');
+    destaqueFc.textContent = fmt(rTudo.liquido);
+    destaqueFc.className = 'resultado resultado-dinheiro' + (rTudo.liquido > 0 ? ' saldo-positivo' : '');
+
+    // Explica a diferença entre somar na mão e a soma correta
+    const somaIngenua = r2(rExtras.liquido + rSA.liquido);
+    const diferenca = r2(somaIngenua - rTudo.liquido);
+    el('fcNota').textContent = (temExtras && temSA && diferenca !== 0)
+      ? `Somando os líquidos das duas abas na mão daria ${fmt(somaIngenua)}. A diferença de ${fmt(Math.abs(diferenca))} é imposto que só aparece quando os dois valores entram juntos e parte deles sobe de faixa.`
+      : '';
+  }
+
+  // ---- Eventos ----
+  const recalcular = calcularTudo;
+
+  // Campos que existem nas duas abas andam juntos
+  function espelhar(a, b) {
+    const copiar = (de, para) => {
+      if (de.type === 'checkbox') para.checked = de.checked;
+      else para.value = de.value;
+    };
+    const ligar = (de, para) => ['input', 'change'].forEach(ev => {
+      de.addEventListener(ev, () => { copiar(de, para); recalcular(); });
+    });
+    ligar(a, b);
+    ligar(b, a);
+  }
+
+  espelhar(salarioBase, saSalario);
+  espelhar(dependentes, saDependentes);
+  espelhar(mesRef, saMes);
+
+  [horas60, horas100, saHoras, saAtuado60, saAtuado100, saDescontar, saDsrSobreaviso].forEach(c => {
+    c.addEventListener('input', recalcular);
+    c.addEventListener('change', recalcular);
+  });
+
+  [salarioBase, saSalario].forEach(campo => {
+    campo.addEventListener('blur', () => {
+      const v = parseMoeda(campo.value);
+      if (!v) return;
+      const formatado = v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      salarioBase.value = formatado;
+      saSalario.value = formatado;
+    });
+  });
+
+  el('btnUsarSaldo').addEventListener('click', () => {
+    if (saldoMinutosAtual === null || saldoMinutosAtual <= 0) {
+      alert('Preencha a entrada e a saída realizadas na aba Horários para ter um saldo positivo.');
+      return;
+    }
+    const h = Math.floor(saldoMinutosAtual / 60);
+    const m = saldoMinutosAtual % 60;
+    horas60.value = `${h}:${String(m).padStart(2, '0')}`;
+    recalcular();
+  });
+
+  recalcular();
 </script>
 
 </body>
