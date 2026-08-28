@@ -91,6 +91,10 @@
     outline-offset: 2px;
   }
 
+  /* O painel precisa ocupar a largura toda: o body é um flex centralizado,
+     então sem isto o wrapper encolhe e espreme os cartões para baixo. */
+  .painel { width: 100%; }
+
   .painel[hidden] { display: none; }
 
   /* --- CONTAINER PARA O LAYOUT LADO A LADO --- */
@@ -121,6 +125,15 @@
   }
 
   .card-largo { max-width: 460px; }
+
+  /* Aba Horários: os dois cartões repartem a largura disponível */
+  #painel-horarios .container-cards { max-width: 1120px; }
+
+  #painel-horarios .card {
+    flex: 1 1 0;
+    max-width: none;
+    min-width: 300px;
+  }
 
   .section-title {
     background: rgba(255,255,255,0.4);
@@ -353,6 +366,115 @@
 
   .caixa-check input { accent-color: var(--cor-primaria); width: 16px; height: 16px; cursor: pointer; }
 
+  /* --- LANÇAMENTOS --- */
+  .botao {
+    background: var(--cor-primaria);
+    color: #fff;
+    border: none;
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 11px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+  }
+
+  .botao:hover { background: #8a0836; }
+  .botao:disabled { opacity: 0.45; cursor: not-allowed; }
+  .botao:focus-visible { outline: 3px solid rgba(168,10,67,0.35); outline-offset: 2px; }
+
+  .botao-secundario {
+    background: rgba(255,255,255,0.6);
+    color: var(--cor-primaria);
+    border: 1px solid rgba(168,10,67,0.4);
+  }
+  .botao-secundario:hover { background: #fff; }
+
+  .lanc-lista {
+    max-height: 320px;
+    overflow-y: auto;
+    margin-top: 4px;
+  }
+
+  .lanc-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 10px;
+    padding: 9px 12px;
+    margin-bottom: 7px;
+    text-align: left;
+  }
+
+  .lanc-info { flex: 1; min-width: 0; }
+
+  .lanc-data {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #4a0033;
+  }
+
+  .lanc-meta {
+    font-size: 0.72rem;
+    color: #6b2545;
+    margin-top: 2px;
+  }
+
+  .lanc-valor {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--cor-primaria);
+    white-space: nowrap;
+  }
+
+  .btn-remover {
+    background: none;
+    border: none;
+    color: var(--cor-negativo);
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 2px 5px;
+    border-radius: 6px;
+  }
+  .btn-remover:hover { background: rgba(198,40,40,0.12); }
+
+  .etiqueta {
+    display: inline-block;
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    margin-right: 5px;
+  }
+
+  .etiqueta-mes { background: #e8f5e9; color: #1b5e20; }
+  .etiqueta-tri { background: #fff3e0; color: #9a5b00; }
+
+  .vazio {
+    font-size: 0.82rem;
+    color: #6b2545;
+    text-align: center;
+    padding: 18px 10px;
+    background: rgba(255,255,255,0.35);
+    border-radius: 10px;
+  }
+
+  .aviso-storage {
+    font-size: 0.72rem;
+    color: #9a5b00;
+    background: #fff3e0;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-top: 10px;
+    text-align: left;
+  }
+
   footer {
     margin-top: 40px;
     font-size: 0.9rem;
@@ -384,6 +506,7 @@
     <button class="aba" role="tab" id="aba-horarios" aria-controls="painel-horarios" aria-selected="true">⏰ Horários</button>
     <button class="aba" role="tab" id="aba-valores" aria-controls="painel-valores" aria-selected="false">💰 Quanto vou receber</button>
     <button class="aba" role="tab" id="aba-sobreaviso" aria-controls="painel-sobreaviso" aria-selected="false">📟 Sobreaviso</button>
+    <button class="aba" role="tab" id="aba-lancamentos" aria-controls="painel-lancamentos" aria-selected="false">📒 Meus lançamentos</button>
     <button class="aba" role="tab" id="aba-fechamento" aria-controls="painel-fechamento" aria-selected="false">🧾 Fechamento do mês</button>
   </div>
 
@@ -524,27 +647,18 @@
         <div class="subtitulo">Horas de escala</div>
 
         <div class="bloco">
-          <label class="rotulo" for="saHoras">Tempo à disposição (pago a 1/3)</label>
+          <label class="rotulo" for="saHoras">Escala total (pago a 1/3)</label>
           <input type="text" id="saHoras" class="campo" inputmode="decimal" placeholder="0:00" autocomplete="off">
-          <div class="dica">Total de horas em que você ficou de prontidão no mês. Um fim de semana inteiro é <strong>48:00</strong>.</div>
+          <div class="dica">Todas as horas da escala, incluindo as em que você foi acionado. Um fim de semana inteiro é <strong>48:00</strong>.</div>
         </div>
 
-        <div class="subtitulo">Horas em que você foi acionado</div>
-
-        <div class="linha">
-          <div class="bloco">
-            <label class="rotulo" for="saAtuado60">Dia normal — 60%</label>
-            <input type="text" id="saAtuado60" class="campo" inputmode="decimal" placeholder="0:00" autocomplete="off">
-          </div>
-          <div class="bloco">
-            <label class="rotulo" for="saAtuado100">Domingo/feriado — 100%</label>
-            <input type="text" id="saAtuado100" class="campo" inputmode="decimal" placeholder="0:00" autocomplete="off">
-          </div>
+        <div class="dica">
+          Foi acionado durante a escala? Essas horas são hora extra normal — lance elas na aba <strong>Quanto vou receber</strong>, junto com as demais. Aqui embaixo elas já são consideradas.
         </div>
 
         <label class="caixa-check">
           <input type="checkbox" id="saDescontar" checked>
-          <span>Descontar as horas acionadas do tempo à disposição</span>
+          <span>Descontar as horas extras da aba anterior do tempo à disposição</span>
         </label>
         <label class="caixa-check">
           <input type="checkbox" id="saDsrSobreaviso" checked>
@@ -563,8 +677,6 @@
           <div class="detalhe-linha"><span>Valor da sua hora normal</span><span id="sdValorHora">—</span></div>
           <div class="detalhe-linha"><span>Hora de sobreaviso (1/3)</span><span id="sdValorSobreaviso">—</span></div>
           <div class="detalhe-linha"><span>Sobreaviso <small id="sdQtdSA"></small></span><span id="sdSobreaviso">—</span></div>
-          <div class="detalhe-linha"><span>Acionamento 60% <small id="sdQtd60"></small></span><span id="sdAtuado60">—</span></div>
-          <div class="detalhe-linha"><span>Acionamento 100% <small id="sdQtd100"></small></span><span id="sdAtuado100">—</span></div>
           <div class="detalhe-linha"><span>DSR de <select id="saMes" class="mes-inline" aria-label="Mês de referência do DSR"></select> <small id="sdPercDSR"></small></span><span id="sdDSR">—</span></div>
           <div class="detalhe-linha"><span>Total bruto</span><span id="sdBruto">—</span></div>
           <div class="detalhe-linha desconto"><span>INSS a mais</span><span id="sdINSS">—</span></div>
@@ -577,6 +689,76 @@
         <div class="dica" style="margin-top:14px">
           O tempo de prontidão é pago a 1/3 da hora normal (art. 244 §2 da CLT). Quando você é acionado, aquelas horas viram hora extra do dia — 60% em dia comum, 100% em domingo ou feriado — e por isso saem da contagem do 1/3, já que você estava trabalhando e não apenas à disposição. Se a sua escala pagar as duas coisas por cima, desmarque a opção de descontar.
         </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ PAINEL 5: LANÇAMENTOS ============ -->
+  <div class="painel" id="painel-lancamentos" role="tabpanel" aria-labelledby="aba-lancamentos" hidden>
+    <div class="container-cards">
+
+      <div class="card card-largo">
+        <div class="section-title">📒 Meus lançamentos</div>
+
+        <div class="dica" style="margin-bottom:12px">
+          Anote a hora extra no dia em que ela acontece — a data e a quantidade dizem o resto, seguindo a Cláusula Quinta do acordo coletivo: em <strong>dia de semana</strong>, as 2 primeiras horas vão para o banco e o que passar disso é pago no mês; <strong>sábado, domingo e feriado</strong> são sempre pagos no mês.
+        </div>
+
+        <div class="linha">
+          <div class="bloco">
+            <label class="rotulo" for="lcData">Data</label>
+            <input type="date" id="lcData" class="campo">
+          </div>
+          <div class="bloco estreito">
+            <label class="rotulo" for="lcHoras">Horas</label>
+            <input type="text" id="lcHoras" class="campo" inputmode="decimal" placeholder="0:00" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="dica" id="lcPreview" style="margin-bottom:10px"></div>
+
+        <button type="button" class="botao" id="btnAddLanc">Adicionar lançamento</button>
+
+        <div class="subtitulo">A receber neste mês</div>
+
+        <div class="detalhe">
+          <div class="detalhe-linha"><span>Sábados — 60% <small id="lcQtdSab"></small></span><span id="lcValSab">—</span></div>
+          <div class="detalhe-linha"><span>Dia de semana acima de 2h — 60% <small id="lcQtdExc"></small></span><span id="lcValExc">—</span></div>
+          <div class="detalhe-linha"><span>Domingos e feriados — 100% <small id="lcQtdDom"></small></span><span id="lcValDom">—</span></div>
+          <div class="detalhe-linha"><span>DSR <small id="lcPercDSR"></small></span><span id="lcValDSR">—</span></div>
+          <div class="detalhe-linha total"><span>Bruto do mês</span><span id="lcBrutoMes">—</span></div>
+        </div>
+
+        <button type="button" class="botao botao-secundario" id="btnLancarCalculo" style="margin-top:12px">Jogar estas horas no cálculo</button>
+
+        <div class="subtitulo">Acumulado do trimestre</div>
+
+        <div class="linha">
+          <div class="bloco">
+            <label class="rotulo" for="lcCiclo">O trimestre fecha em</label>
+            <select id="lcCiclo" class="campo">
+              <option value="2" selected>Nov / Fev / Mai / Ago — ADM</option>
+              <option value="0">Mar / Jun / Set / Dez</option>
+              <option value="1">Jan / Abr / Jul / Out</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="detalhe">
+          <div class="detalhe-linha"><span>Período</span><span id="lcTriPeriodo">—</span></div>
+          <div class="detalhe-linha"><span>Horas no banco <small id="lcQtdSem"></small></span><span id="lcValSem">—</span></div>
+          <div class="detalhe-linha total"><span>Pagamento previsto</span><span id="lcTriPgto">—</span></div>
+        </div>
+        <div class="dica">O banco é apurado do dia 12 de um mês ao dia 11 do seguinte, então uma hora feita depois do dia 11 já conta para o mês seguinte. O DSR entra no mês em que o saldo for pago, porque a proporção depende daquele calendário.</div>
+
+        <div class="subtitulo">Histórico</div>
+        <div class="lanc-lista" id="lcLista"></div>
+
+        <button type="button" class="botao botao-secundario" id="btnLimparLanc" style="margin-top:10px">Apagar todos os lançamentos</button>
+
+        <div class="aviso-storage" id="lcAvisoStorage" hidden></div>
 
       </div>
 
@@ -605,8 +787,6 @@
           <div class="detalhe-linha"><span>Hora extra 60% <small id="fcQtdHE60"></small></span><span id="fcHE60">—</span></div>
           <div class="detalhe-linha"><span>Hora extra 100% <small id="fcQtdHE100"></small></span><span id="fcHE100">—</span></div>
           <div class="detalhe-linha"><span>Sobreaviso <small id="fcQtdSA"></small></span><span id="fcSA">—</span></div>
-          <div class="detalhe-linha"><span>Acionamento 60% <small id="fcQtdAt60"></small></span><span id="fcAt60">—</span></div>
-          <div class="detalhe-linha"><span>Acionamento 100% <small id="fcQtdAt100"></small></span><span id="fcAt100">—</span></div>
           <div class="detalhe-linha"><span>DSR <small id="fcPercDSR"></small></span><span id="fcDSR">—</span></div>
           <div class="detalhe-linha total"><span>Total bruto dos adicionais</span><span id="fcBrutoAdd">—</span></div>
         </div>
@@ -825,7 +1005,7 @@
     return new Date(ano, mes - 1, dia);
   }
 
-  function calendarioDoMes(ano, mes, incluirFacultativos) {
+  function feriadosDoAno(ano, incluirFacultativos) {
     const p = pascoa(ano);
     const chave = dt => `${dt.getMonth() + 1}-${dt.getDate()}`;
     const desloca = dias => new Date(p.getFullYear(), p.getMonth(), p.getDate() + dias);
@@ -849,6 +1029,11 @@
       feriados.add(chave(desloca(60)));  // Corpus Christi
     }
 
+    return feriados;
+  }
+
+  function calendarioDoMes(ano, mes, incluirFacultativos) {
+    const feriados = feriadosDoAno(ano, incluirFacultativos);
     const diasNoMes = new Date(ano, mes, 0).getDate();
     let descanso = 0;
     for (let d = 1; d <= diasNoMes; d++) {
@@ -902,7 +1087,7 @@
 
   // Aba "Sobreaviso"
   const saSalario = el('saSalario'), saDependentes = el('saDependentes');
-  const saHoras = el('saHoras'), saAtuado60 = el('saAtuado60'), saAtuado100 = el('saAtuado100');
+  const saHoras = el('saHoras');
   const saDescontar = el('saDescontar'), saDsrSobreaviso = el('saDsrSobreaviso'), saMes = el('saMes');
 
   [mesRef, saMes].forEach(sel => {
@@ -939,16 +1124,15 @@
     const he100 = r2(valorHora * 2 * h100);
 
     // --- Sobreaviso ---
+    //  As horas acionadas já entram como hora extra na aba anterior, então aqui
+    //  elas apenas saem da contagem do 1/3: não se está à disposição e trabalhando
+    //  ao mesmo tempo. Nada de acionamento é lançado duas vezes.
     const hEscala = parseHoras(saHoras.value);
-    const a60 = parseHoras(saAtuado60.value);
-    const a100 = parseHoras(saAtuado100.value);
-    const acionadas = a60 + a100;
-    const excedeu = saDescontar.checked && acionadas > hEscala && hEscala > 0;
-    const horasProntidao = saDescontar.checked ? Math.max(0, hEscala - acionadas) : hEscala;
+    const horasTrabalhadas = h60 + h100;
+    const excedeu = saDescontar.checked && horasTrabalhadas > hEscala && hEscala > 0;
+    const horasProntidao = saDescontar.checked ? Math.max(0, hEscala - horasTrabalhadas) : hEscala;
     const sobreaviso = r2(valorHoraSA * horasProntidao);
-    const at60 = r2(valorHora * 1.6 * a60);
-    const at100 = r2(valorHora * 2 * a100);
-    const baseDsrSA = at60 + at100 + (saDsrSobreaviso.checked ? sobreaviso : 0);
+    const baseDsrSA = saDsrSobreaviso.checked ? sobreaviso : 0;
 
     // --- DSR: por bloco e no total ---
     const dsrExtras = r2((he60 + he100) * prop.fator);
@@ -956,8 +1140,8 @@
     const dsrTotal = r2((he60 + he100 + baseDsrSA) * prop.fator);
 
     const brutoExtras = r2(he60 + he100 + dsrExtras);
-    const brutoSA = r2(sobreaviso + at60 + at100 + dsrSA);
-    const brutoAdicionais = r2(he60 + he100 + sobreaviso + at60 + at100 + dsrTotal);
+    const brutoSA = r2(sobreaviso + dsrSA);
+    const brutoAdicionais = r2(he60 + he100 + sobreaviso + dsrTotal);
 
     // --- Impostos: sempre marginais sobre o salário base ---
     const inssSem = calcINSS(salario);
@@ -998,18 +1182,14 @@
 
     // ================= ABA "SOBREAVISO" =================
     el('saAviso').textContent = excedeu
-      ? 'As horas acionadas passaram do tempo à disposição, então o sobreaviso zerou. Confira os números ou desmarque a opção de descontar.'
+      ? 'As horas extras lançadas passaram do total da escala, então o sobreaviso zerou. Confira os números ou desmarque a opção de descontar.'
       : '';
 
     el('sdValorHora').textContent = salario ? fmt(valorHora) : '\u2014';
     el('sdValorSobreaviso').textContent = salario ? fmt(valorHoraSA) : '\u2014';
     el('sdQtdSA').textContent = fmtHoras(horasProntidao);
-    el('sdQtd60').textContent = fmtHoras(a60);
-    el('sdQtd100').textContent = fmtHoras(a100);
     el('sdPercDSR').textContent = rotuloDSR(prop);
     el('sdSobreaviso').textContent = fmt(sobreaviso);
-    el('sdAtuado60').textContent = fmt(at60);
-    el('sdAtuado100').textContent = fmt(at100);
     el('sdDSR').textContent = fmt(dsrSA);
     el('sdBruto').textContent = fmt(brutoSA);
     el('sdINSS').textContent = '\u2212 ' + fmt(rSA.inssExtra);
@@ -1033,14 +1213,10 @@
     el('fcQtdHE60').textContent = fmtHoras(h60);
     el('fcQtdHE100').textContent = fmtHoras(h100);
     el('fcQtdSA').textContent = fmtHoras(horasProntidao);
-    el('fcQtdAt60').textContent = fmtHoras(a60);
-    el('fcQtdAt100').textContent = fmtHoras(a100);
     el('fcPercDSR').textContent = rotuloDSR(prop);
     el('fcHE60').textContent = fmt(he60);
     el('fcHE100').textContent = fmt(he100);
     el('fcSA').textContent = fmt(sobreaviso);
-    el('fcAt60').textContent = fmt(at60);
-    el('fcAt100').textContent = fmt(at100);
     el('fcDSR').textContent = fmt(dsrTotal);
     el('fcBrutoAdd').textContent = fmt(brutoAdicionais);
 
@@ -1060,10 +1236,307 @@
     // Explica a diferença entre somar na mão e a soma correta
     const somaIngenua = r2(rExtras.liquido + rSA.liquido);
     const diferenca = r2(somaIngenua - rTudo.liquido);
+    renderizarLancamentos();
+
     el('fcNota').textContent = (temExtras && temSA && diferenca !== 0)
       ? `Somando os líquidos das duas abas na mão daria ${fmt(somaIngenua)}. A diferença de ${fmt(Math.abs(diferenca))} é imposto que só aparece quando os dois valores entram juntos e parte deles sobe de faixa.`
       : '';
   }
+
+  // ============================================================
+  //  LANCAMENTOS DE HORA EXTRA + ARMAZENAMENTO LOCAL
+  // ============================================================
+  //  Regra da unidade: hora extra de dia de semana entra no acumulado
+  //  trimestral; sábado, domingo e feriado são pagos no próprio mês.
+  //  A data do lançamento decide sozinha em qual grupo a hora cai.
+
+  const CHAVE_STORAGE = 'adm-controle-horario-v1';
+
+  const lcData = el('lcData'), lcHoras = el('lcHoras'), lcCiclo = el('lcCiclo');
+  const lcLista = el('lcLista'), lcPreview = el('lcPreview');
+
+  let lancamentos = [];
+  let storageOk = true;
+
+  // ---- Persistência (silenciosa quando o navegador bloqueia) ----
+  function salvar() {
+    if (!storageOk) return;
+    try {
+      localStorage.setItem(CHAVE_STORAGE, JSON.stringify({
+        salario: salarioBase.value,
+        dependentes: dependentes.value,
+        ciclo: lcCiclo.value,
+        descontarSA: saDescontar.checked,
+        dsrSA: saDsrSobreaviso.checked,
+        lancamentos
+      }));
+    } catch (e) {
+      storageOk = false;
+      mostrarAvisoStorage();
+    }
+  }
+
+  function carregar() {
+    let bruto = null;
+    try {
+      bruto = localStorage.getItem(CHAVE_STORAGE);
+    } catch (e) {
+      storageOk = false;
+      mostrarAvisoStorage();
+      return;
+    }
+    if (!bruto) return;
+    try {
+      const dados = JSON.parse(bruto);
+      if (dados.salario) { salarioBase.value = dados.salario; saSalario.value = dados.salario; }
+      if (dados.dependentes != null) { dependentes.value = dados.dependentes; saDependentes.value = dados.dependentes; }
+      if (dados.ciclo != null) lcCiclo.value = dados.ciclo;
+      if (typeof dados.descontarSA === 'boolean') saDescontar.checked = dados.descontarSA;
+      if (typeof dados.dsrSA === 'boolean') saDsrSobreaviso.checked = dados.dsrSA;
+      if (Array.isArray(dados.lancamentos)) {
+        lancamentos = dados.lancamentos.filter(l => l && l.d && typeof l.h === 'number');
+      }
+    } catch (e) {
+      // Dado corrompido não pode derrubar a página: começa limpo.
+      lancamentos = [];
+    }
+  }
+
+  function mostrarAvisoStorage() {
+    const caixa = el('lcAvisoStorage');
+    caixa.hidden = false;
+    caixa.textContent = 'Este navegador está bloqueando o armazenamento local, então os lançamentos valem só até fechar a aba. Costuma acontecer em janela anônima ou em pré-visualização.';
+  }
+
+  // ---- Classificação pela data ----
+  function classificar(dataStr) {
+    const [y, m, d] = dataStr.split('-').map(Number);
+    const dt = new Date(y, m - 1, d);
+    const dia = dt.getDay();
+    const ehFeriado = feriadosDoAno(y, false).has(`${m}-${d}`);
+
+    if (dia === 0 || ehFeriado) {
+      return { grupo: 'dom', fator: 2, quando: 'mes', rotulo: ehFeriado && dia !== 0 ? 'Feriado' : 'Domingo', taxa: '100%' };
+    }
+    if (dia === 6) {
+      return { grupo: 'sab', fator: 1.6, quando: 'mes', rotulo: 'Sábado', taxa: '60%' };
+    }
+    return { grupo: 'semana', fator: 1.6, quando: 'trimestre', rotulo: 'Dia de semana', taxa: '60%' };
+  }
+
+  const DIAS_SEMANA = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
+
+  function horasParaTexto(dec) {
+    const total = Math.round(dec * 60);
+    return `${Math.floor(total / 60)}:${String(total % 60).padStart(2, '0')}`;
+  }
+
+  function dataLegivel(dataStr) {
+    const [y, m, d] = dataStr.split('-').map(Number);
+    const dt = new Date(y, m - 1, d);
+    return `${String(d).padStart(2,'0')}/${String(m).padStart(2,'0')} — ${DIAS_SEMANA[dt.getDay()]}`;
+  }
+
+  // ---- Trimestre: o ciclo pode fechar em meses diferentes ----
+  //  O fechamento identifica os meses de virada: Mar/Jun/Set/Dez deixam resto 0
+  //  na divisão por 3, Jan/Abr/Jul/Out deixam 1, Fev/Mai/Ago/Nov deixam 2.
+  //  A ADM usa o terceiro caso (Cláusula Quinta do acordo coletivo).
+  //  A chave é um índice absoluto de mês, para o trimestre Dez-Jan-Fev não se
+  //  partir ao virar o ano.
+  function trimestreDe(ano, mes, fechamento) {
+    const passos = (((fechamento - mes) % 3) + 3) % 3;
+    const absFim = ano * 12 + (mes - 1) + passos;
+    const abrir = abs => ({ ano: Math.floor(abs / 12), mes: abs % 12 + 1 });
+    return { chave: absFim, primeiro: abrir(absFim - 2), ultimo: abrir(absFim) };
+  }
+
+  //  O banco é apurado do dia 12 de um mês ao dia 11 do seguinte, então uma hora
+  //  feita a partir do dia 12 já pertence à apuração do mês seguinte.
+  const LIMITE_BANCO_DIA = 2;
+
+  function mesApuracao(dataStr) {
+    const [y, m, d] = dataStr.split('-').map(Number);
+    if (d >= 12) {
+      const dt = new Date(y, m, 1);
+      return { ano: dt.getFullYear(), mes: dt.getMonth() + 1 };
+    }
+    return { ano: y, mes: m };
+  }
+
+  // ---- Renderização ----
+  function renderizarPreview() {
+    if (!lcData.value) { lcPreview.textContent = ''; return; }
+    const c = classificar(lcData.value);
+    lcPreview.textContent = c.quando === 'mes'
+      ? `${c.rotulo} — ${c.taxa}, pago no mês.`
+      : `${c.rotulo} — ${c.taxa}, entra no acumulado do trimestre.`;
+  }
+
+  function renderizarLancamentos() {
+    const salario = parseMoeda(salarioBase.value);
+    const valorHora = salario / DIVISOR;
+    const mesSel = parseInt(mesRef.value, 10);
+    const fechamento = parseInt(lcCiclo.value, 10);
+    const prop = proporcaoDSR(mesSel);
+    const triAtual = trimestreDe(ANO, mesSel, fechamento);
+
+    //  O limite de 2h do banco é diário, não por lançamento: duas anotações
+    //  no mesmo dia somam antes de o corte ser aplicado.
+    const totalPorData = {};
+    lancamentos.forEach(l => { totalPorData[l.d] = (totalPorData[l.d] || 0) + l.h; });
+
+    let hSab = 0, hDom = 0, hExcedente = 0, hBanco = 0;
+
+    Object.keys(totalPorData).forEach(data => {
+      const total = totalPorData[data];
+      const [y, m] = data.split('-').map(Number);
+      const c = classificar(data);
+      const noMesSelecionado = (y === ANO && m === mesSel);
+
+      if (c.grupo === 'sab') { if (noMesSelecionado) hSab += total; return; }
+      if (c.grupo === 'dom') { if (noMesSelecionado) hDom += total; return; }
+
+      // Dia de semana: as 2 primeiras horas vão ao banco, o resto é pago no mês
+      if (noMesSelecionado) hExcedente += Math.max(0, total - LIMITE_BANCO_DIA);
+      const ap = mesApuracao(data);
+      if (trimestreDe(ap.ano, ap.mes, fechamento).chave === triAtual.chave) {
+        hBanco += Math.min(total, LIMITE_BANCO_DIA);
+      }
+    });
+
+    // ---- Histórico ----
+    const ordenados = [...lancamentos].sort((a, b) => b.d.localeCompare(a.d));
+    lcLista.innerHTML = '';
+
+    if (!ordenados.length) {
+      const vazio = document.createElement('div');
+      vazio.className = 'vazio';
+      vazio.textContent = 'Nenhuma hora extra lançada ainda.';
+      lcLista.appendChild(vazio);
+    }
+
+    ordenados.forEach(item => {
+      const c = classificar(item.d);
+      const totalDia = totalPorData[item.d];
+      const divide = c.grupo === 'semana' && totalDia > LIMITE_BANCO_DIA;
+
+      const linha = document.createElement('div');
+      linha.className = 'lanc-item';
+
+      const info = document.createElement('div');
+      info.className = 'lanc-info';
+
+      const dataEl = document.createElement('div');
+      dataEl.className = 'lanc-data';
+      dataEl.textContent = `${dataLegivel(item.d)} — ${horasParaTexto(item.h)}`;
+
+      const meta = document.createElement('div');
+      meta.className = 'lanc-meta';
+      const et = document.createElement('span');
+      if (c.quando === 'mes') {
+        et.className = 'etiqueta etiqueta-mes';
+        et.textContent = 'no mês';
+      } else if (divide) {
+        et.className = 'etiqueta etiqueta-tri';
+        et.textContent = 'banco + mês';
+      } else {
+        et.className = 'etiqueta etiqueta-tri';
+        et.textContent = 'banco';
+      }
+      meta.appendChild(et);
+      const explica = divide
+        ? `${c.rotulo} — 2h no banco, ${horasParaTexto(totalDia - LIMITE_BANCO_DIA)} pagas no mês`
+        : `${c.rotulo} — ${c.taxa}`;
+      meta.appendChild(document.createTextNode(explica));
+
+      info.appendChild(dataEl);
+      info.appendChild(meta);
+
+      const valor = document.createElement('div');
+      valor.className = 'lanc-valor';
+      valor.textContent = salario ? fmt(r2(valorHora * c.fator * item.h)) : '';
+
+      const remover = document.createElement('button');
+      remover.type = 'button';
+      remover.className = 'btn-remover';
+      remover.setAttribute('aria-label', 'Remover lançamento de ' + dataLegivel(item.d));
+      remover.textContent = '\u00d7';
+      remover.addEventListener('click', () => {
+        const alvo = lancamentos.findIndex(l => l.d === item.d && l.h === item.h);
+        if (alvo >= 0) lancamentos.splice(alvo, 1);
+        salvar();
+        renderizarLancamentos();
+      });
+
+      linha.appendChild(info);
+      linha.appendChild(valor);
+      linha.appendChild(remover);
+      lcLista.appendChild(linha);
+    });
+
+    // ---- Resumo do mês ----
+    const valSab = r2(valorHora * 1.6 * hSab);
+    const valExc = r2(valorHora * 1.6 * hExcedente);
+    const valDom = r2(valorHora * 2 * hDom);
+    const dsr = r2((valSab + valExc + valDom) * prop.fator);
+
+    el('lcQtdSab').textContent = fmtHoras(hSab);
+    el('lcQtdExc').textContent = fmtHoras(hExcedente);
+    el('lcQtdDom').textContent = fmtHoras(hDom);
+    el('lcPercDSR').textContent = rotuloDSR(prop);
+    el('lcValSab').textContent = fmt(valSab);
+    el('lcValExc').textContent = fmt(valExc);
+    el('lcValDom').textContent = fmt(valDom);
+    el('lcValDSR').textContent = fmt(dsr);
+    el('lcBrutoMes').textContent = fmt(r2(valSab + valExc + valDom + dsr));
+
+    // ---- Resumo do trimestre ----
+    const pgto = triAtual.ultimo;
+    const anoNoRotulo = a => a !== ANO ? ` de ${a}` : '';
+    el('lcTriPeriodo').textContent =
+      `${NOMES_MES[triAtual.primeiro.mes - 1]}${anoNoRotulo(triAtual.primeiro.ano)} a ${NOMES_MES[triAtual.ultimo.mes - 1]}${anoNoRotulo(triAtual.ultimo.ano)}`;
+    el('lcQtdSem').textContent = fmtHoras(hBanco);
+    el('lcValSem').textContent = fmt(r2(valorHora * 1.6 * hBanco));
+    el('lcTriPgto').textContent = `27 de ${NOMES_MES[pgto.mes - 1]}${anoNoRotulo(pgto.ano)}`;
+
+    const btn = el('btnLancarCalculo');
+    btn.disabled = (hSab + hExcedente + hDom) === 0;
+    btn.dataset.sab = hSab + hExcedente;
+    btn.dataset.dom = hDom;
+  }
+
+  // ---- Eventos dos lançamentos ----
+  lcData.addEventListener('change', renderizarPreview);
+  lcData.addEventListener('input', renderizarPreview);
+  lcCiclo.addEventListener('change', () => { salvar(); renderizarLancamentos(); });
+
+  el('btnAddLanc').addEventListener('click', () => {
+    const horas = parseHoras(lcHoras.value);
+    if (!lcData.value) { alert('Escolha a data da hora extra.'); return; }
+    if (horas <= 0) { alert('Informe quantas horas foram, por exemplo 2:30.'); return; }
+    lancamentos.push({ d: lcData.value, h: horas });
+    lcHoras.value = '';
+    salvar();
+    renderizarLancamentos();
+  });
+
+  el('btnLimparLanc').addEventListener('click', () => {
+    if (!lancamentos.length) return;
+    if (!confirm('Apagar todos os lançamentos? Isso não tem volta.')) return;
+    lancamentos = [];
+    salvar();
+    renderizarLancamentos();
+  });
+
+  el('btnLancarCalculo').addEventListener('click', () => {
+    const btn = el('btnLancarCalculo');
+    const sab = parseFloat(btn.dataset.sab) || 0;
+    const dom = parseFloat(btn.dataset.dom) || 0;
+    horas60.value = sab ? horasParaTexto(sab) : '';
+    horas100.value = dom ? horasParaTexto(dom) : '';
+    recalcular();
+    trocarAba(el('aba-valores'));
+  });
 
   // ---- Eventos ----
   const recalcular = calcularTudo;
@@ -1075,7 +1548,7 @@
       else para.value = de.value;
     };
     const ligar = (de, para) => ['input', 'change'].forEach(ev => {
-      de.addEventListener(ev, () => { copiar(de, para); recalcular(); });
+      de.addEventListener(ev, () => { copiar(de, para); recalcular(); salvar(); });
     });
     ligar(a, b);
     ligar(b, a);
@@ -1085,9 +1558,13 @@
   espelhar(dependentes, saDependentes);
   espelhar(mesRef, saMes);
 
-  [horas60, horas100, saHoras, saAtuado60, saAtuado100, saDescontar, saDsrSobreaviso].forEach(c => {
+  [horas60, horas100, saHoras].forEach(c => {
     c.addEventListener('input', recalcular);
     c.addEventListener('change', recalcular);
+  });
+
+  [saDescontar, saDsrSobreaviso].forEach(c => {
+    c.addEventListener('change', () => { recalcular(); salvar(); });
   });
 
   [salarioBase, saSalario].forEach(campo => {
@@ -1111,6 +1588,10 @@
     recalcular();
   });
 
+  // ---- Partida ----
+  carregar();
+  lcData.value = new Date().toISOString().slice(0, 10);
+  renderizarPreview();
   recalcular();
 </script>
 
